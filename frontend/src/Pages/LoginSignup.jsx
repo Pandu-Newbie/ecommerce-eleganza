@@ -1,13 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './CSS/LoginSignup.css';
 
-export const LoginSignup = () => {
+const LoginSignup = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    username: ""
+  });
+
+  const [isSignup, setIsSignup] = useState(false);
+
+  const changeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const login = async () => {
+    console.log("Login Execute", formData);
+    let responseData;
+    await fetch('http://localhost:4000/login', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/form-data',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    }).then((response) => response.json()).then((data) => responseData = data);
+
+    if (responseData.success) {
+      localStorage.setItem('auth-token', responseData.token);
+      window.location.replace("/");
+    }else{
+      alert(responseData.errors)
+    }
+  };
+
+  const signup = async () => {
+    console.log("Signup Execute", formData);
+    let responseData;
+    await fetch('http://localhost:4000/signup', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/form-data',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    }).then((response) => response.json()).then((data) => responseData = data);
+
+    if (responseData.success) {
+      localStorage.setItem('auth-token', responseData.token);
+      window.location.replace("/");
+    }else{
+      alert(responseData.errors)
+    }
+  };
+
   return (
     <div className="login-signup">
       <div className="login-signup-container">
-        <h1>Masuk</h1>
+        <h1>{isSignup ? 'Daftar' : 'Masuk'}</h1>
         <p className="login-signup-subtext">
-          Belum punya akun Eleganza? <span className="login-signup-register">Daftar</span>
+          {isSignup
+            ? 'Sudah punya akun Eleganza?'
+            : 'Belum punya akun Eleganza?'}
+          <span
+            className="login-signup-register"
+            onClick={() => setIsSignup(!isSignup)}
+          >
+            {isSignup ? 'Masuk' : 'Daftar'}
+          </span>
         </p>
 
         <button className="google-login">
@@ -25,13 +85,39 @@ export const LoginSignup = () => {
         </div>
 
         <div className="login-signup-fields">
-          <input type="text" placeholder="Nomor HP atau Alamat Email" />
-          <input type="password" placeholder="Masukkan Password Anda" />
+          {isSignup && (
+            <input
+              name="username"
+              value={formData.username}
+              onChange={changeHandler}
+              type="text"
+              placeholder="Username"
+            />
+          )}
+          <input
+            name="email"
+            value={formData.email}
+            onChange={changeHandler}
+            type="text"
+            placeholder="Nomor HP atau Alamat Email"
+          />
+          <input
+            name="password"
+            value={formData.password}
+            onChange={changeHandler}
+            type="password"
+            placeholder="Masukkan Password Anda"
+          />
         </div>
 
-        <p className="forgot-password">Lupa password?</p>
-
-        <button className="login-button">LOGIN</button>
+        {isSignup ? (
+          <button onClick={signup} className="login-button">DAFTAR</button>
+        ) : (
+          <>
+            <p className="forgot-password">Lupa password?</p>
+            <button onClick={login} className="login-button">LOGIN</button>
+          </>
+        )}
 
         <p className="terms">
           Dengan melanjutkan, saya menyetujui{' '}
@@ -43,4 +129,4 @@ export const LoginSignup = () => {
   );
 };
 
-export default LoginSignup
+export default LoginSignup;
