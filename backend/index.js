@@ -281,6 +281,44 @@ app.post('/login', async (req,res)=>{
     }
 })
 
+const midtransClient = require('midtrans-client');
+
+// Set up Midtrans Snap API
+let snap = new midtransClient.Snap({
+    isProduction: false, // Set to true for production environment
+    serverKey: 'SB-Mid-server-tDBl_6fEZ0aySZAWaDleC8kv'
+});
+
+// Endpoint to create Midtrans transaction
+app.post('/create-transaction', fetchUser, async (req, res) => {
+    try {
+        const { orderId, grossAmount, customerDetails } = req.body;
+
+        let parameter = {
+            "transaction_details": {
+                "order_id": orderId,
+                "gross_amount": grossAmount
+            },
+            "credit_card": {
+                "secure": true
+            },
+            "customer_details": customerDetails
+        };
+
+        let transaction = await snap.createTransaction(parameter);
+        let transactionToken = transaction.token;
+
+        res.json({
+            success: true,
+            transactionToken
+        });
+    } catch (error) {
+        console.error("Error creating transaction:", error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+});
+
+
 // Start server
 app.listen(port, (error) => {
     if (!error) {
