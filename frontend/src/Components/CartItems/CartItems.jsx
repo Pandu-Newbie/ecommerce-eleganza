@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './CartItems.css';
 import { ShopContext } from '../../Context/ShopContext';
 import remove_icon from '../Assets/cart_cross_icon.png';
 
 const CartItems = () => {
   const { getTotalCartAmount, all_product, cartItems, removeFromCart } = useContext(ShopContext);
+  const [address, setAddress] = useState('');
 
   const handleCheckout = async () => {
     try {
@@ -14,7 +15,8 @@ const CartItems = () => {
         first_name: 'Pandu',
         last_name: 'Mahasiswa',
         email: 'pandu@example.com',
-        phone: '08123456789'
+        phone: '08123456789',
+        address // Add address to customer details
       };
 
       const response = await fetch('http://localhost:4000/create-transaction', {
@@ -86,6 +88,18 @@ const CartItems = () => {
             <div className="cartitems-total-item">
               <h3>Total</h3>
               <h3>Rp{getTotalCartAmount()}</h3>
+            </div>
+          </div>
+          <div className="cartitems-address">
+            <p>Masukkan Alamat</p>
+            <div className="cartitems-addressbox">
+              <input
+                type="text"
+                placeholder="Alamat"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+              <button>Submit</button>
             </div>
           </div>
           <button onClick={handleCheckout}>CHECKOUT</button>

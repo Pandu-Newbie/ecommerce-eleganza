@@ -20,7 +20,7 @@ export const Navbar = () => {
         <div className="nav-logo d-flex align-items-center col-sm-2">
             <img src={logo_crown} alt='crownIcon'/>
         </div>
-        <img onClick={dropdown_toggle} src={nav_dropdown} alt=''/>
+        <img onClick={dropdown_toggle} src="" alt=''/>
         <ul ref={menuRef}  className='nav-menu'>
             <li onClick={()=>{setMenu("shop")}}><Link style={{textDecoration: 'none'}} to='/'>Shop</Link>{menu==="shop"?<hr/>:<></>}</li>
             <li onClick={()=>{setMenu("mens")}}><Link style={{textDecoration: 'none'}} to='/mens'>Men</Link>{menu==="mens"?<hr/>:<></>}</li>
